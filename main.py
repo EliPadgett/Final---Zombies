@@ -34,8 +34,47 @@ fire(self):
 - creates a Bullet object
 - appends the Bullet object to the players's bullet list
 '''
+
 class Player(Turtle):
-	pass
+	def __init__(self, x, y, color, left_key, right_key):
+        super().__init__()
+        self.shape("turtle")
+        self.color(color)
+        self.pu()
+        self.speed(0)
+        self.goto(x, y)
+        self.setheading(90)
+        self.bullets = []
+        self.left_key = left_key
+        self.right_key = right_key
+
+    def move(self):
+		self.forward(5)
+		if player.xcor > -230 or player.xcor < 230:
+			player.heading(random.randint(0,360))
+		if player.ycor > -230 or player.ycor < 230:
+			player.heading(random.randint(0,360))
+	
+	def turn_left(self):
+        self.left(15)
+
+    def turn_right(self):
+        self.right(15)
+
+class Zombie(turtle):
+	    def __init__(self, x, y, target):
+        super().__init__()
+        self.shape("turtle")
+        self.color("green")
+        self.pu()
+        self.speed(0)
+        self.goto(x, y)
+        self.setheading(90)
+		self.target = target
+	
+	def move(self):
+		self.setheading(self.towards(self.target))
+		self.forward(7)
 
 '''
 Bullet() Class
