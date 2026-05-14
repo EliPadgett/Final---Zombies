@@ -36,40 +36,50 @@ fire(self):
 '''
 
 class Player(Turtle):
-	def __init__(self, x, y, color, left_key, right_key):
+    def __init__(self, x, y, playercolor, screen, right_key, left_key, fire_key, health):
         super().__init__()
-        self.shape("turtle")
-        self.color(color)
-        self.pu()
+        self.ht()
         self.speed(0)
-        self.goto(x, y)
+        self.color(playercolor)
+        self.playercolor = playercolor
+        self.penup()
+        self.goto(x,y)
         self.setheading(90)
+        self.shape("turtle")
         self.bullets = []
-        self.left_key = left_key
-        self.right_key = right_key
+        self.alive = True
+        self.color = color
+        self.st()
+        self.health = 1
+        screen.onkeypress(self.turn_left, left_key)
+        screen.onkeypress(self.turn_right, right_key)
+        screen.onkeypress(self.fire, fire_key)
 
-    def move(self):
-		self.forward(5)
-		if player.xcor > -230 or player.xcor < 230:
-			player.heading(random.randint(0,360))
-		if player.ycor > -230 or player.ycor < 230:
-			player.heading(random.randint(0,360))
-	
-	def turn_left(self):
+    def fire(self):
+        self.bullets.append(Bullet(self))
+
+    def turn_left(self):
         self.left(15)
 
     def turn_right(self):
         self.right(15)
 
+    def move(self):
+        self.forward(4)
+        if self.xcor() > 230 or self.xcor() < -230:
+            self.setheading(180 - self.heading())
+        if self.ycor() > 230 or self.ycor() < -230:
+            self.setheading(-self.heading())
+
 class Zombie(turtle):
-	    def __init__(self, x, y, target):
-        super().__init__()
-        self.shape("turtle")
-        self.color("green")
+	def __init__(self, x, y, target):
+    	super().__init__()
+    	self.shape("turtle")
+    	self.color("green")
         self.pu()
-        self.speed(0)
-        self.goto(x, y)
-        self.setheading(90)
+    	self.speed(0)
+    	self.goto(x, y)
+    	self.setheading(90)
 		self.target = target
 	
 	def move(self):
@@ -93,6 +103,30 @@ die()
 - hides the object. 
 - removes object from the player's bullet list
 '''
+
+class Bullet(Turtle):
+    def __init__(self, player):
+        super().__init__()
+        self.ht()
+        self.speed(0)
+        self.shape("circle")
+        self.pu()
+        self.goto(player.xcor(),player.ycor())
+        self.color(player.playercolor)
+        self.setheading(player.heading())
+        self.forward(15)
+        self.player = player
+        self.showturtle()
+
+    def move(self):
+        self.forward(10)
+        if self.xcor() > 230 or self.xcor() < -230 or self.ycor() > 230 or self.ycor() < -230:
+            self.kill()
+    
+    def kill(self):
+        if self in self.player.bullets:
+            self.ht()
+            self.bullets[].remove
 
 
 #### DRIVER CODE ####
