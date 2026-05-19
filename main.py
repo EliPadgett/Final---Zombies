@@ -1,5 +1,6 @@
 from turtle import *
 from random import randint, choice
+import time
 
 #### CLASS AND FUNCTION DEFINITIONS #####
 def playing_area():
@@ -47,6 +48,7 @@ class Player(Turtle):
         self.setheading(90)
         self.shape("turtle")
         self.bullets = []
+        self.bombs = []
         self.alive = True
         self.color = color
         self.st()
@@ -72,19 +74,24 @@ class Player(Turtle):
             self.setheading(-self.heading())
 
 class Zombie(turtle):
-	def __init__(self, x, y, target):
-    	super().__init__()
-    	self.shape("turtle")
-    	self.color("green")
-        self.pu()
-    	self.speed(0)
-    	self.goto(x, y)
-    	self.setheading(90)
-		self.target = target
+	def __init__(self, x, y, target, screen):
+            super().__init__()
+    	    self.shape("turtle")
+    	    self.color("green")
+            self.pu()
+    	    self.speed(0)
+    	    self.goto(x, y)
+    	    self.setheading(90)
+		    self.target = target
+            living = True
 	
 	def move(self):
-		self.setheading(self.towards(self.target))
-		self.forward(7)
+		self.setheading(self.towards(self.p1))
+		self.forwarard(random.randint(2,5))
+    
+    def die(self)
+        living = False
+        zombie.ht
 
 '''
 Bullet() Class
@@ -127,6 +134,13 @@ class Bullet(Turtle):
         if self in self.player.bullets:
             self.ht()
             self.bullets[].remove
+
+class Bomb(Turtle):
+    def __init__(self,player):
+        self.shape("circle")
+        self.size(streach_wid(50),streach_len(50))
+        self.color("red")
+        self.pu()
 
 
 #### DRIVER CODE ####
