@@ -1,5 +1,5 @@
 from turtle import *
-from random import randint, choice
+from random import random, randint
 import time
 
 #### CLASS AND FUNCTION DEFINITIONS #####
@@ -37,61 +37,65 @@ fire(self):
 '''
 
 class Player(Turtle):
-    def __init__(self, x, y, playercolor, screen, right_key, left_key, fire_key, health):
-        super().__init__()
-        self.ht()
-        self.speed(0)
-        self.color(playercolor)
-        self.playercolor = playercolor
-        self.penup()
-        self.goto(x,y)
-        self.setheading(90)
-        self.shape("turtle")
-        self.bullets = []
-        self.bombs = []
-        self.alive = True
-        self.color = color
-        self.st()
-        self.health = 1
-        screen.onkeypress(self.turn_left, left_key)
-        screen.onkeypress(self.turn_right, right_key)
-        screen.onkeypress(self.fire, fire_key)
+	def __init__(self,x,y,leftkey,rightkey,firekey,bombkey,color):
+		super().__init__()
+		self.ht()
+		self.penup()
+		self.goto(x,y)
+		self.speed(0)
+		self.shape("turtle")
+		self.color(color)
+		self.bullets=[]
+		self.bombs=[]
+		self.leftkey=leftkey
+		self.rightkey=rightkey
+		self.firekey=firekey
+		self.bombkey=bombkey
+		self.point=0
+		self.st()
 
-    def fire(self):
-        self.bullets.append(Bullet(self))
+	def move(self):
+		self.forward(10)
+	
+	def right(self):
+		self.right(10)
+	
+	def left(self):
+		self.left(10)
+	
+	def fire(self):
+		self.bullets.append(Bullet(self))
+	
+	def bomb(self):
+		self.bombs.append(Bomb(self))
 
-    def turn_left(self):
-        self.left(15)
+	def die(self):
+		self.ht()
+		kill=Turtle()
+		kill.home()
+		kill.ht()
+		kill.speed(0)
 
-    def turn_right(self):
-        self.right(15)
-
-    def move(self):
-        self.forward(4)
-        if self.xcor() > 230 or self.xcor() < -230:
-            self.setheading(180 - self.heading())
-        if self.ycor() > 230 or self.ycor() < -230:
-            self.setheading(-self.heading())
-
-class Zombie(turtle):
-	def __init__(self, x, y, target, screen):
-            super().__init__()
-    	    self.shape("turtle")
-    	    self.color("green")
-            self.pu()
-    	    self.speed(0)
-    	    self.goto(x, y)
-    	    self.setheading(90)
-		    self.target = target
-            living = True
+class zombie(Turtle):
+	def __init__(self,x,y,target):
+		super().__init__()
+		self.ht()
+		self.speed(0)
+		self.target = target
+		self.color("green")
+		self.shape("turtle")
+		self.penup()
+		self.goto(x,y)
+		self.setheading(self.towards(self.target))
+		self.st()
 	
 	def move(self):
-		self.setheading(self.towards(self.p1))
-		self.forwarard(random.randint(2,5))
-    
-    def die(self)
-        living = False
-        zombie.ht
+		self.forward(random.randint(3,5))
+		self.setheading(self.towards(self.target))
+	
+	def die(self):
+		self.ht()
+		zombies.remove(self)
 
 '''
 Bullet() Class
@@ -133,14 +137,38 @@ class Bullet(Turtle):
     def kill(self):
         if self in self.player.bullets:
             self.ht()
-            self.bullets[].remove
+            self.player.bullet.remove(self)
 
 class Bomb(Turtle):
-    def __init__(self,player):
-        self.shape("circle")
-        self.size(streach_wid(50),streach_len(50))
-        self.color("red")
-        self.pu()
+	def __init__(self,player):
+		super().__init__()
+		self.ht()
+		self.speed(0)
+		self.penup()
+		self.player = player
+		self.shape("circle")
+		self.color(player.color()[0])
+		self.goto(player.position())
+		self.detonationtimer=0
+		self.st()
+	
+	def explode(self):
+		self.ht()
+		self.goto(self.xcor(),self.ycor()+50)
+		self.pendown()
+		self.begin_fill()
+		self.circle(-50)
+		self.end_fill()
+		self.penup()
+		self.goto(self.xcor(),self.ycor()-50)
+		exploded=[]
+		for i in range(len(zombies)-1):
+			if self.xcor()-50 < zombies[i].xcor() and self.ycor()-50 < zombies[i].ycor() and self.xcor()+50 > zombies[i].xcor() and self.ycor()+50 > zombies[i].ycor():
+				exploded.append(zombies[i])
+		for deadzombie in exploded:
+			deadzombie.die()
+		self.clear()
+		self.player.bombs.remove(self)
 
 
 #### DRIVER CODE ####
@@ -148,6 +176,41 @@ screen = Screen()
 screen.bgcolor("black")
 
 playing_area()
+playing_area()
+global p1
+p1=Player(10,0,'right','left','dp','down','red')
+global p2
+p2=Player(10,0,'a','d','w','s','blue')
+
+global zombies
+zombies = []
+
+prize = Turtle()
+prize.ht()
+prize.speed(0)
+prize.penup()
+prize.shape("circle")
+prize.color('yellow')
+prize.goto(random.randint(-200,200),random.randint(-200,200))
+prize.setheading(random.randint(0,359))
+prize.st()
+prizesCollected = 0
+
+alive = True
+won = False
+
+onkeypress(p1.left,p1.leftkey)
+onkeypress(p1.right,p1.rightkey)
+onkeypress(p1.fire,p1.firekey)
+onkeypress(p1.bomb,p1.bombkey)
+onkeypress(p2.left,p2.leftkey)
+onkeypress(p2.right,p2.rightkey)
+onkeypress(p2.fire,p2.firekey)
+onkeypress(p2.bomb,p2.bombkey)
+screen.listen()
+
+while alive == True:
+    player.move
 
 
 screen.mainloop()
